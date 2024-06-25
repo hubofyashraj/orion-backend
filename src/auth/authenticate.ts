@@ -24,8 +24,11 @@ export const jwt_middleware = async (req: RequestExtended, res: Response, next: 
         next(); 
     }
     else {
-        let token = req.headers.authorization!;
-        
+        let token = req.headers.authorization;
+        if(!token) {
+            res.status(401).json({auth: 'failed', reason: 'no token provided'});
+            return;
+        }
         if(token.match(' ')) token = token.split(' ')[1];
         verify_token(token).then((username)=>{
             req.user=username,
